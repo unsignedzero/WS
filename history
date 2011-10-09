@@ -1,0 +1,13 @@
+This program was originally created to format C++ files
+into Python-like formatting
+
+Version 0.5.0.0 07-24-2011 Foundation
+Original Work Code Created.
+All functions in sepearte files
+
+Verison 0.8.0.0 10-09-2011 Raiser
+All code now in one file.
+Exceptions added and additional modes added.
+Extra code lines removed!
+No module docstrings have been made YET but all functions have docstrings
+
