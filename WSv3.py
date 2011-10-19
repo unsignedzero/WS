@@ -5,15 +5,18 @@
 # Version 0.5
 # 10-08-2011
 # Version 0.8
-# Python Version 3+
+# 10-18-2011
+# Version 0.8.0.1
+# 10-18-2011
+# Version 0.8.1.0
 
 #DO NOT CHANGE BELOW THIS POINT
 
-class ZText_Error(Exception):
+class ZText_Error ( Exception ):
   """Base class for exceptions in this module"""
   pass
 
-class UnbalancedBraces(ZText_Error):
+class UnbalancedBraces ( ZText_Error ):
   """Exception for unbalanced braces
   Attributes:
     expr -- input expression in which the error occurred
@@ -25,11 +28,11 @@ class UnbalancedBraces(ZText_Error):
 
 def pause():
   """Correct pauses regardless of the os this function is running on."""
-  import os,sys
-  pau = "pause" if sys.platform[:3]=="win" else "read -sn 1 -p \"Press any key to continue...\\n\""
-  os.system(pau)
-  
-#def formatter( fname, fout = None, space_count = 2, special = 0, NO_EXCEPTION = False, *kargs):
+  #import os,sys
+  #pau = "pause" if sys.platform[:3]=="win" else "read -rsn 1 -p \"Press any key to continue...\\n\""
+  #os.system(pau)
+  raw_input("Press any key to continue...\n")
+
 def formatter( fname, fout = None, space_count = 2, *kargs, special = 0, NO_EXCEPTION = False ):
   r"""
   formatter(...)
@@ -64,7 +67,7 @@ def formatter( fname, fout = None, space_count = 2, *kargs, special = 0, NO_EXCE
        special -- special arguments, see below
 
        NO_EXCEPTION -- Disables exceptions messages of unbalanced braces
- 
+       
       SPECIAL:
         Treat this variable as an array of bools.  (Represented as an integer)
         This turns on/off additional functions, listed below.
@@ -89,24 +92,24 @@ def formatter( fname, fout = None, space_count = 2, *kargs, special = 0, NO_EXCE
   stack       = []
 
   #Files 
-  source_code = open(fname, "r" )
+  source_code = open(fname)
   fout = (fname + "_edit.txt") if (fout == None) else fout 
   dest_code   = open(fout, "w" )
   ###err_code    = open(fname + "_err.txt", "w" )
 
-  print("%s starting with %s. Output is %s." % (sys._getframe(0).f_code.co_name , fname, fout) )
+  print("%s starting with %s. \nOutput is %s." % (sys._getframe(0).f_code.co_name , fname, fout) )
 
   for (count,line) in enumerate(source_code) :
 
-  ###err_code.write( '%03d | ' % len(line.strip() ) + line)
+     ###err_code.write( '%03d | ' % len(line.strip() ) + line)
 
     #Empty Line are Empty
      empty_line = 1 if line.strip() else 0
- 
+   
      line = ( ( empty_line * shift * space_count * ' ' ) +
-                line.strip()                             )
- 
-		     #Insert Extra Formatting here
+              line.strip()                             )
+              
+    #Insert Extra Formatting here
      if special > 0:
        if special & 1 :
          if '{' in line and '}' not in line :
@@ -114,7 +117,7 @@ def formatter( fname, fout = None, space_count = 2, *kargs, special = 0, NO_EXCE
          elif '{' not in line and '}' in line :
            line += " // " + stack.pop()
        if special & 2 :
-           line = ( '\t' * shift ) + line.lstrip()
+         line = ( '\t' * shift ) + line.lstrip()
        if special & 4 :
          if '\*' in line:
            shift_delay +=1
@@ -132,9 +135,9 @@ def formatter( fname, fout = None, space_count = 2, *kargs, special = 0, NO_EXCE
 
     ##Calculate Shift for next line
      if brace_start in line :
-						        shift += 1
+       shift += 1
      if brace_end   in line :
-						        shift -= 1
+       shift -= 1
      if shift_delay != 0    :
        shift += shift_delay
        shift_delay = 0
@@ -147,7 +150,6 @@ def formatter( fname, fout = None, space_count = 2, *kargs, special = 0, NO_EXCE
     raise UnbalancedBraces( 0 , "Unbalanced Opening Braces in the file!" )
   print( "%s Compeleted!" % sys._getframe(0).f_code.co_name )
 
-#def lcount( fname , fout = None, width = 6, code = "UTF-8", *kargs ):
 def lcount( fname , fout = None, width = 6, *kargs, code = "UTF-8" ) :
   r"""
   lcount(...)
@@ -191,7 +193,7 @@ def rspace_killer ( fname, fout = None ) :
      Removes excess white space on the right
      
      ATTRIBUTES:
- 
+     
      fname -- This is the name of the input file.
      
      fout  -- This is the name of the output file. If not specificed,
@@ -209,25 +211,33 @@ def rspace_killer ( fname, fout = None ) :
   for line in fin :
     fout.write( line.rstrip() )
     
-  print( "%s Compeleted!" % sys._getframe(0).f_code.co_name )  
-  
+  print( "%s Compeleted!" % sys._getframe(0).f_code.co_name ) 
+ 
+def ver_update():
+  import sys
+  if ( sys.version_info[0] == 2 ):
+    import __future__ 
+
 if __name__ == "__main__" :
   import sys
+  #ver_update()
   print("Starting WS")
   try:
     inf = sys.argv[1]
     outf = sys.argv[2]
     spf = sys.argv[3]
   except IndexError:
-    #finput = raw_input("Please enter a file name\n")
     finput = input("Please enter a file name\n")
     fname = finput.split()
     try:
-      special = finput[1]
+      mode = finput[1]
     except IndexError:
-      special = 0
+      mode = 0
     finally:
-      formatter(finput[0], special)
+      if ( isinstance(finput,list) ) :
+        formatter(finput[0], special = int(mode))
+      else :
+        formatter(finput, special = 0)
   else:
     formatter(inf,outf, special = spf)
   pause()
