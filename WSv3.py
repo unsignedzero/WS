@@ -9,6 +9,8 @@
 # Version 0.8.0.1
 # 10-18-2011
 # Version 0.8.1.0
+# 10-25-2011
+# Version 0.8.2.0
 
 #DO NOT CHANGE BELOW THIS POINT
 
@@ -29,14 +31,17 @@ class UnbalancedBraces ( ZText_Error ):
 def pause():
   """Correct pauses regardless of the os this function is running on."""
   #import os,sys
-  #pau = "pause" if sys.platform[:3]=="win" else "read -rsn 1 -p \"Press any key to continue...\\n\""
+  #pau = "pause" if sys.platform[:3]=="win" else 
+    #"read -rsn 1 -p \"Press any key to continue...\\n\""
   #os.system(pau)
-  raw_input("Press any key to continue...\n")
+  input("Press any key to continue...\n")
 
-def formatter( fname, fout = None, space_count = 2, *kargs, special = 0, NO_EXCEPTION = False ):
+def formatter( fname, fout = None, space_count = 2, 
+  *kargs, special = 0, NO_EXCEPTION = False ):
   r"""
   formatter(...)
-     formatter( fname, fout = None, space_co unt = 2, *kargs, special = 0, NO_EXCEPTION = False )
+     formatter( fname, fout = None, space_co unt = 2, 
+       *kargs, special = 0, NO_EXCEPTION = False )
 
      Given a correct filename fname, this program auto-formats the program 
      file. This function formats source code, in a similar fashion to    
@@ -72,24 +77,28 @@ def formatter( fname, fout = None, space_count = 2, *kargs, special = 0, NO_EXCE
         Treat this variable as an array of bools.  (Represented as an integer)
         This turns on/off additional functions, listed below.
         
-        1 -- Comments after the end brace, what the opening brace was
+         1 -- Comments after the end brace, what the opening brace was
         
-        2 -- Use tabs, rather than spaces!
+         2 -- Use tabs, rather than spaces!
 
-        4 -- Treat /* */ comments as braces, for the purposes of     
+         4 -- Treat /* */ comments as braces, for the purposes of     
                indentation
 
-        8 -- Comment-only // lines are shifted -1 left
-        
+         8 -- Comment-only // lines are shifted -1 left
+
+        16 -- Non-braced, if/for/while will indent
         
   """
   import sys
   
   shift       = 0
-  shift_delay = 0
+  shift_delay = 0   #For   4
+  cond_shift  = 0   #For  16
+  mline_shift = 0   #Future Use
   brace_start = '{'
   brace_end   = '}'
-  stack       = []
+  stack       = []  #For   1
+  space_char  = ' ' #For   2
 
   #Files 
   source_code = open(fname)
@@ -97,7 +106,12 @@ def formatter( fname, fout = None, space_count = 2, *kargs, special = 0, NO_EXCE
   dest_code   = open(fout, "w" )
   ###err_code    = open(fname + "_err.txt", "w" )
 
-  print("%s starting with %s. \nOutput is %s." % (sys._getframe(0).f_code.co_name , fname, fout) )
+  print("%s starting with %s. \nOutput is %s." % 
+    (sys._getframe(0).f_code.co_name , fname, fout) )
+
+  #SPECIAL
+  if special & 2 :
+    space_char = '\t'
 
   for (count,line) in enumerate(source_code) :
 
@@ -106,8 +120,9 @@ def formatter( fname, fout = None, space_count = 2, *kargs, special = 0, NO_EXCE
     #Empty Line are Empty
      empty_line = 1 if line.strip() else 0
    
-     line = ( ( empty_line * shift * space_count * ' ' ) +
-              line.strip()                             )
+     line = ( ( empty_line * ( shift + cond_shift + mline_shift  )*  
+              space_count * space_char                            ) 
+              + line.strip()                                      )
               
     #Insert Extra Formatting here
      if special > 0:
@@ -116,22 +131,23 @@ def formatter( fname, fout = None, space_count = 2, *kargs, special = 0, NO_EXCE
            stack.append( line[:-1].strip() )
          elif '{' not in line and '}' in line :
            line += " // " + stack.pop()
-       if special & 2 :
-         line = ( '\t' * shift ) + line.lstrip()
-       if special & 4 :
-         if '\*' in line:
+       if special & 4 :      
+         if r'/*' in line:
            shift_delay +=1
-         if '*\\' in line:
+         if r'*/' in line:
            shift_delay -=1
        if special & 8 :
          if (line.lstrip()).startswith('//'):
-           if (line[0] == ' '):
+           if (line[0] == ' ' or line[0] == '\t' ):
              line = line[1:]
-         
-     line += '\n'
-
+       if special & 16 :
+         if ( 'if' in line or 'else' in line 
+          or 'for' in line or 'else' in line ) and '{' not in line:
+           cond_shift = 1
+         else:
+           cond_shift = 0
     #Write to File
-     dest_code.write( line )
+     dest_code.write( line + '\n' )
 
     ##Calculate Shift for next line
      if brace_start in line :
@@ -143,10 +159,12 @@ def formatter( fname, fout = None, space_count = 2, *kargs, special = 0, NO_EXCE
        shift_delay = 0
        
      if NO_EXCEPTION and shift < 0 :
-       print( "\n  File \"%s\", line %i, in %s" % ( fname, count,  sys._getframe().f_code.co_name ) )
+       print( "\n  File \"%s\", line %i, in %s" % 
+         ( fname, count,  sys._getframe().f_code.co_name ) )
        raise UnbalancedBraces( 0 , "Unbalanced Closing Braces in the file" )
   if NO_EXCEPTION and shift != 0:
-    print( "\n  File \"%s\" , in %s" % ( fname,  sys._getframe().f_code.co_name ) )
+    print( "\n  File \"%s\" , in %s" % 
+      ( fname,  sys._getframe().f_code.co_name ) )
     raise UnbalancedBraces( 0 , "Unbalanced Opening Braces in the file!" )
   print( "%s Compeleted!" % sys._getframe(0).f_code.co_name )
 
@@ -176,7 +194,8 @@ def lcount( fname , fout = None, width = 6, *kargs, code = "UTF-8" ) :
   fout = (fname + '_counted.txt') if (fout == None) else fout 
   file_out = open(fout,"w" , 1, code)
 
-  print("%s starting with %s. Output is %s." % (sys._getframe(0).f_code.co_name , fname, fout) )
+  print("%s starting with %s. Output is %s." % 
+    (sys._getframe(0).f_code.co_name , fname, fout) )
     
   width = "%0" + str(width) + "d | "
 
@@ -206,7 +225,8 @@ def rspace_killer ( fname, fout = None ) :
   fout = source + '_wk.txt' if ( fout == None ) else fout
   dest = open(fout,"w")
 
-  print("%s starting with %s. Output is %s." % (sys._getframe(0).f_code.co_name , fname, fout) )
+  print("%s starting with %s. Output is %s." % 
+    (sys._getframe(0).f_code.co_name , fname, fout) )
     
   for line in fin :
     fout.write( line.rstrip() )
@@ -224,13 +244,14 @@ if __name__ == "__main__" :
   print("Starting WS")
   try:
     inf = sys.argv[1]
-    outf = sys.argv[2]
-    spf = sys.argv[3]
+    outf = (sys.argv[1] + "_edit.txt") if ( 
+      len(sys.argv[1:2]) == 1 ) else sys.argv[2]
+    spf = 0 if ( len(sys.argv[1:3]) < 3 ) else sys.argv[3]
   except IndexError:
     finput = input("Please enter a file name\n")
-    fname = finput.split()
+    finput = finput.split()
     try:
-      mode = finput[1]
+      mode = int(finput[1])
     except IndexError:
       mode = 0
     finally:
@@ -241,4 +262,4 @@ if __name__ == "__main__" :
   else:
     formatter(inf,outf, special = spf)
   pause()
-  
+
