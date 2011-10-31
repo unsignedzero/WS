@@ -3,7 +3,7 @@ into Python-like formatting
 
 Version 0.5.0.0 07-24-2011 Foundation
 Original Work Code Created.
-All functions in seperate files
+All functions in separate files
 
 Version 0.8.0.0 10-09-2011 Raiser
 All code now in one file.
@@ -19,10 +19,15 @@ Bugs fixed.
 Two versions of code, one for v2 python and one for v3 python.
 Codes both work and annoying split bug is also fixed.
 
-
 Version 0.8.2.0 10-25-2011
 Fixed bad input to the script
 Included .sh script to run the code manually
 Calling the script will automatically run if there are 1 or 2 arguments passed.
 Added new mode (16) to formatter
 All lines in code are 80 characters or less
+
+Version 0.8.2.1 10-31-2011
+Added additional comments to code.
+*Will update 16 and add debug soon.
+Grammar fixed on all files.
+

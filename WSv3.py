@@ -1,35 +1,43 @@
-# WonderSwan
+# WonderSwan 
+# By David Tran (unsignedzero)
 # Provides basic meta programing support
 # to python "format"
-# 07-24-2011
-# Version 0.5
-# 10-08-2011
-# Version 0.8
-# 10-18-2011
-# Version 0.8.0.1
-# 10-18-2011
-# Version 0.8.1.0
-# 10-25-2011
-# Version 0.8.2.0
+# 10-31-2011
+# Version 0.8.2.1
 
 #DO NOT CHANGE BELOW THIS POINT
 
 class ZText_Error ( Exception ):
-  """Base class for exceptions in this module"""
+  r"""
+  ZText_Error
+
+      Base class for exceptions in this module
+  """
   pass
 
 class UnbalancedBraces ( ZText_Error ):
-  """Exception for unbalanced braces
-  Attributes:
-    expr -- input expression in which the error occurred
-    msg  -- explanation of the error
+  r"""
+  UnbalancedBraces
+
+      Exception for unbalanced braces for this module.
+
+      ARGUMENTS:
+        expr -- Input expression in which the error occurred
+
+        msg  -- explanation of the error
+
   """
   def __init__(self, expr, msg):
     self.expr = expr
     self.msg = msg
 
 def pause():
-  """Correct pauses regardless of the os this function is running on."""
+  r"""
+  pause()
+      pause()
+
+      Correct pauses regardless of the os this function is running on.
+  """
   #import os,sys
   #pau = "pause" if sys.platform[:3]=="win" else 
     #"read -rsn 1 -p \"Press any key to continue...\\n\""
@@ -37,11 +45,11 @@ def pause():
   input("Press any key to continue...\n")
 
 def formatter( fname, fout = None, space_count = 2, 
-  *kargs, special = 0, NO_EXCEPTION = False ):
+  *kargs, special = 0, EXCEPTION = False ):
   r"""
   formatter(...)
      formatter( fname, fout = None, space_co unt = 2, 
-       *kargs, special = 0, NO_EXCEPTION = False )
+       *kargs, special = 0, EXCEPTION = False )
 
      Given a correct filename fname, this program auto-formats the program 
      file. This function formats source code, in a similar fashion to    
@@ -52,7 +60,7 @@ def formatter( fname, fout = None, space_count = 2,
      output will have the same name as the input file except now with 
      "_edit.txt" apprended to it.
 
-     ASUMPTIONS:
+     ASSUMPTIONS:
        The file passed should have balanced braces. If this requirement is   
        not met, the program will return an Exception, unless NO_EXCEPTIONS
        is true!
@@ -60,22 +68,28 @@ def formatter( fname, fout = None, space_count = 2,
        All lines of the source code can and will be "reorder" even if they
        are comments!
 
-     ATTRIBUTES:
-       fname -- This is the name of input file.
+     ARGUMENTS:
 
-       fout  -- This is the name of the output file. If not specificed,
-         then it will be fname + "_edit.txt"
+       fname        -- This is the name of input file.
 
-       space_count -- This is the amount of spaces, that each opening brace
-         will shift the lines below it.
+     Optional Arguments:
 
-       special -- special arguments, see below
+       fout         -- This is the name of the output file. 
+         If not specificed, then it will be fname + "_edit.txt"
 
-       NO_EXCEPTION -- Disables exceptions messages of unbalanced braces
+       space_count  -- This is the amount of spaces, that each 
+         opening brace will shift the lines below it. Default 2.
+
+      Optional Keyword Arguments:
+
+        special      -- special arguments, see special section below.
+
+        EXCEPTION -- Disables exceptions messages of unbalanced braces.
        
       SPECIAL:
-        Treat this variable as an array of bools.  (Represented as an integer)
-        This turns on/off additional functions, listed below.
+
+        Treat this variable as an array of bools.  (Represented as an  
+          integer) This turns on/off additional functions, listed below.
         
          1 -- Comments after the end brace, what the opening brace was
         
@@ -94,6 +108,7 @@ def formatter( fname, fout = None, space_count = 2,
   shift       = 0
   shift_delay = 0   #For   4
   cond_shift  = 0   #For  16
+  cond_delay  = 0   #For  16
   mline_shift = 0   #Future Use
   brace_start = '{'
   brace_end   = '}'
@@ -127,9 +142,9 @@ def formatter( fname, fout = None, space_count = 2,
     #Insert Extra Formatting here
      if special > 0:
        if special & 1 :
-         if '{' in line and '}' not in line :
+         if brace_start in line and brace_end not in line :
            stack.append( line[:-1].strip() )
-         elif '{' not in line and '}' in line :
+         elif brace_start not in line and brace_end in line :
            line += " // " + stack.pop()
        if special & 4 :      
          if r'/*' in line:
@@ -138,14 +153,15 @@ def formatter( fname, fout = None, space_count = 2,
            shift_delay -=1
        if special & 8 :
          if (line.lstrip()).startswith('//'):
-           if (line[0] == ' ' or line[0] == '\t' ):
+           if (line[0] == ' ' or line[0] == '\t' ): #CHECK ME
              line = line[1:]
-       if special & 16 :
+       if special & 16:
          if ( 'if' in line or 'else' in line 
-          or 'for' in line or 'else' in line ) and '{' not in line:
+          or 'for' in line or 'while' in line ) and brace_start not in line:
            cond_shift = 1
          else:
            cond_shift = 0
+           
     #Write to File
      dest_code.write( line + '\n' )
 
@@ -158,11 +174,14 @@ def formatter( fname, fout = None, space_count = 2,
        shift += shift_delay
        shift_delay = 0
        
-     if NO_EXCEPTION and shift < 0 :
+     #Check if negative shift
+     if EXCEPTION and shift < 0 :
        print( "\n  File \"%s\", line %i, in %s" % 
          ( fname, count,  sys._getframe().f_code.co_name ) )
        raise UnbalancedBraces( 0 , "Unbalanced Closing Braces in the file" )
-  if NO_EXCEPTION and shift != 0:
+       
+  #Check if there is extra shift at end.
+  if EXCEPTION and shift != 0:
     print( "\n  File \"%s\" , in %s" % 
       ( fname,  sys._getframe().f_code.co_name ) )
     raise UnbalancedBraces( 0 , "Unbalanced Opening Braces in the file!" )
@@ -175,7 +194,8 @@ def lcount( fname , fout = None, width = 6, *kargs, code = "UTF-8" ) :
 
      Writes the line number of each line into the output text file.
 
-     ATTRIBUTES:
+     ARGUMENTS:
+
        fname -- This is the name of input file.
        
        fout  -- This is the name of the output file. If not specificed,
@@ -211,7 +231,7 @@ def rspace_killer ( fname, fout = None ) :
      
      Removes excess white space on the right
      
-     ATTRIBUTES:
+     ARGUMENTS:
      
      fname -- This is the name of the input file.
      
@@ -233,16 +253,15 @@ def rspace_killer ( fname, fout = None ) :
     
   print( "%s Compeleted!" % sys._getframe(0).f_code.co_name ) 
  
-def ver_update():
-  import sys
-  if ( sys.version_info[0] == 2 ):
-    import __future__ 
-
 if __name__ == "__main__" :
   import sys
-  #ver_update()
   print("Starting WS")
   try:
+    #We test and see if, upon execution, some arguments are passed.
+    #
+    #Written this way, the code will run, if at least one argument is
+    #passed. The other parameter(s), will be default ones.
+    #If not, we will load our manual CLI prompt.
     inf = sys.argv[1]
     outf = (sys.argv[1] + "_edit.txt") if ( 
       len(sys.argv[1:2]) == 1 ) else sys.argv[2]
@@ -251,12 +270,23 @@ if __name__ == "__main__" :
     finput = input("Please enter a file name\n")
     finput = finput.split()
     try:
-      mode = int(finput[1])
-    except IndexError:
+      foutput = None
       mode = 0
+      foutput = str(finput[1])
+      mode = int(finput[2])
+    except IndexError:
+      pass
     finally:
+      if ( foutput == '0' ) :
+        #'0' is an escape variable that can be typed in as input and
+        #remapped to None, so that the programmer can use the default 
+        #output file
+        foutput = None
       if ( isinstance(finput,list) ) :
-        formatter(finput[0], special = int(mode))
+        #Note that strings can be accessed as lists with the [] operator
+        #so we must check if the input is a legit list or just an array
+        #of chars!
+        formatter(finput[0], foutput, special = int(mode))
       else :
         formatter(finput, special = 0)
   else:
