@@ -36,9 +36,9 @@ class UnbalancedBraces ( ZText_Error ):
         expr -- Input expression in which the error occurred
 
         msg  -- explanation of the error
-
+        
   """
-  
+
   def __init__(self, expr, msg):
     self.expr = expr
     self.msg = msg
@@ -55,14 +55,16 @@ def pause():
     #"read -rsn 1 -p \"Press any key to continue...\\n\""
   #os.system(pau)
   
-  input("Press any key to continue...\n")
+  raw_input("Press any key to continue...\n")
 
+#def formatter( fname, fout = None, space_count = 2, 
+  #*kargs, special = 0, EXCEPTION = True ):
 def formatter( fname, fout = None, space_count = 2, 
-  *kargs, special = 0, EXCEPTION = False ):
-  r"""
+  special = 0, EXCEPTION = True ):
+  r""":w
   formatter(...)
-     formatter( fname, fout = None, space_count = 2, 
-       *kargs, special = 0, EXCEPTION = False )
+     formatter( fname, fout = None, space_co unt = 2, 
+       *kargs, special = 0, EXCEPTION = True )
 
      Given a correct filename fname, this program auto-formats the program 
      file. This function formats source code, in a similar fashion to    
@@ -97,10 +99,9 @@ def formatter( fname, fout = None, space_count = 2,
 
         special      -- special arguments, see special section below.
 
-        EXCEPTION -- Disables exceptions messages of unbalanced braces.
+        EXCEPTION    -- Disables exceptions messages of unbalanced braces.
        
       SPECIAL:
-
         Treat this variable as an array of bools.  (Represented as an  
           integer) This turns on/off additional functions, listed below.
         
@@ -201,14 +202,15 @@ def formatter( fname, fout = None, space_count = 2,
     raise UnbalancedBraces( 0 , "Unbalanced Opening Braces in the file!" )
   print( "%s Compeleted!" % sys._getframe(0).f_code.co_name )
 
-def lcount( fname , fout = None, width = 6, *kargs, code = "UTF-8" ) :
+#def lcount( fname , fout = None, width = 6, *kargs, code = "UTF-8" ) :
+def lcount( fname , fout = None, width = 6, code = "UTF-8" ) :
   r"""
   lcount(...)
      lcount( fname , fout = None, width = 6, *kargs, code = "UTF-8" )
 
      Writes the line number of each line into the output text file.
 
-     ARGUMENTS:
+
 
        fname -- This is the name of input file.
        
@@ -249,7 +251,7 @@ def rspace_killer ( fname, fout = None ) :
      
      fname -- This is the name of the input file.
      
-     fout  -- This is the name of the output file. If not specificed,
+     fout  -- This is the name of the output file. If not specified,
        then it will be fname + "_wk.txt"     
   """
 
@@ -266,7 +268,7 @@ def rspace_killer ( fname, fout = None ) :
     fout.write( line.rstrip() )
     
   print( "%s Compeleted!" % sys._getframe(0).f_code.co_name ) 
- 
+
 if __name__ == "__main__" :
   import sys
   print("Starting WS")
@@ -283,7 +285,7 @@ if __name__ == "__main__" :
     spf = 0 if ( len(sys.argv[1:3]) < 3 ) else sys.argv[3]
   except IndexError:
     #We are in the CLI Prompt
-    finput = input("Please enter a file name\n")
+    finput = raw_input("Please enter a file name\n")
     finput = finput.split()
     try:
       #Sets default values BEFORE getting it from input. Done this way,

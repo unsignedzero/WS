@@ -30,4 +30,12 @@ Version 0.8.2.1 10-31-2011
 Added additional comments to code.
 *Will update 16 and add debug soon.
 Grammar fixed on all files.
+Default value for the output file can be set by passing 0.
 
+Version 0.8.3.0 11-01-2011
+*The updated code from 0.8.1.0 will work from v2.5 and onward, not v2.
+(Due to the use of the ternary operator.)
+README created.
+Additional comments placed in the code.
+Default value for the output file can be set by passing 0.
+*Will update 16 and add debug soon.
