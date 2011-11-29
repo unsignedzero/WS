@@ -6,7 +6,7 @@ StreamCheck
 FileList:
 -WSv2.5.py or WSv3.py
 -WS.sh
-Verison 0.8.3.0
+Verison 0.8.3.1
 Built in Python
 Created by David Tran (unsignedzero)
 
@@ -82,7 +82,13 @@ function formatter or the docstring of formatter.
  - - 01 [DEBG] Debug Information
 
 Certain functions within this module have debugging functions.
-EXCEPTION is a keyword that can be passed to 
+
+EXCEPTION is a keyword that can be passed to TURN OFF PRESET 
+exceptions within that function. (Note: Exceptions due to bad 
+input will still occur!)
+
+debug is a keyword that can be passed to on debug mode, for
+the function. (Currently this does nothing.)
 
 ---------------------------------------------------------------
  -  (A*) Functions 

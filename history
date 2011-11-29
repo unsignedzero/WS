@@ -1,5 +1,5 @@
 This program was originally created to format C++ files
-into Python-like formatting
+into Python-like formatting.
 
 Version 0.5.0.0 07-24-2011 Foundation
 Original Work Code Created.
@@ -30,7 +30,6 @@ Version 0.8.2.1 10-31-2011
 Added additional comments to code.
 *Will update 16 and add debug soon.
 Grammar fixed on all files.
-Default value for the output file can be set by passing 0.
 
 Version 0.8.3.0 11-01-2011
 *The updated code from 0.8.1.0 will work from v2.5 and onward, not v2.
@@ -39,3 +38,11 @@ README created.
 Additional comments placed in the code.
 Default value for the output file can be set by passing 0.
 *Will update 16 and add debug soon.
+
+Version 0.8.3.1 11-29-2011
+Edited comments and readme for grammatical errors and miscellaneous 
+mistakes.
+EXCEPTION in v3 is default true, like v2.5
+Debug flag created.
+*Will update 16 and add debug soon.
+

@@ -2,8 +2,8 @@
 r"""
 # WonderSwan 
 # By David Tran (unsignedzero)
-# 11-01-2011
-# Version 0.8.3.0
+# 11-29-2011
+# Version 0.8.3.1
 # Provides basic meta programming support to python "format"
 
 Abstract:
@@ -60,10 +60,10 @@ def pause():
 #def formatter( fname, fout = None, space_count = 2, 
   #*kargs, special = 0, EXCEPTION = True ):
 def formatter( fname, fout = None, space_count = 2, 
-  special = 0, EXCEPTION = True ):
-  r""":w
+  special = 0, EXCEPTION = True, DEBUG = False ):
+  r"""
   formatter(...)
-     formatter( fname, fout = None, space_co unt = 2, 
+     formatter( fname, fout = None, space_count = 2, 
        *kargs, special = 0, EXCEPTION = True )
 
      Given a correct filename fname, this program auto-formats the program 
@@ -100,6 +100,8 @@ def formatter( fname, fout = None, space_count = 2,
         special      -- special arguments, see special section below.
 
         EXCEPTION    -- Disables exceptions messages of unbalanced braces.
+        
+        DEBUG        -- Turns on debug mode to show additional information
        
       SPECIAL:
         Treat this variable as an array of bools.  (Represented as an  
@@ -210,7 +212,7 @@ def lcount( fname , fout = None, width = 6, code = "UTF-8" ) :
 
      Writes the line number of each line into the output text file.
 
-
+     ARGUMENTS:
 
        fname -- This is the name of input file.
        
@@ -252,7 +254,7 @@ def rspace_killer ( fname, fout = None ) :
      fname -- This is the name of the input file.
      
      fout  -- This is the name of the output file. If not specified,
-       then it will be fname + "_wk.txt"     
+       then it will be fname + "_wk.txt"
   """
 
   import sys

@@ -2,8 +2,8 @@
 r"""
 # WonderSwan 
 # By David Tran (unsignedzero)
-# 11-01-2011
-# Version 0.8.3.0
+# 11-29-2011
+# Version 0.8.3.1
 # Provides basic meta programming support to python "format"
 
 Abstract:
@@ -57,12 +57,14 @@ def pause():
   
   input("Press any key to continue...\n")
 
+  
+
 def formatter( fname, fout = None, space_count = 2, 
-  *kargs, special = 0, EXCEPTION = False ):
+  *kargs, special = 0, EXCEPTION = True, DEBUG = False ):
   r"""
   formatter(...)
      formatter( fname, fout = None, space_count = 2, 
-       *kargs, special = 0, EXCEPTION = False )
+       *kargs, special = 0, EXCEPTION = True )
 
      Given a correct filename fname, this program auto-formats the program 
      file. This function formats source code, in a similar fashion to    
@@ -97,10 +99,11 @@ def formatter( fname, fout = None, space_count = 2,
 
         special      -- special arguments, see special section below.
 
-        EXCEPTION -- Disables exceptions messages of unbalanced braces.
+        EXCEPTION    -- Disables exceptions messages of unbalanced braces.
+        
+        DEBUG        -- Turns on debug mode to show additional information
        
       SPECIAL:
-
         Treat this variable as an array of bools.  (Represented as an  
           integer) This turns on/off additional functions, listed below.
         
@@ -201,6 +204,7 @@ def formatter( fname, fout = None, space_count = 2,
     raise UnbalancedBraces( 0 , "Unbalanced Opening Braces in the file!" )
   print( "%s Compeleted!" % sys._getframe(0).f_code.co_name )
 
+  
 def lcount( fname , fout = None, width = 6, *kargs, code = "UTF-8" ) :
   r"""
   lcount(...)
@@ -249,8 +253,8 @@ def rspace_killer ( fname, fout = None ) :
      
      fname -- This is the name of the input file.
      
-     fout  -- This is the name of the output file. If not specificed,
-       then it will be fname + "_wk.txt"     
+     fout  -- This is the name of the output file. If not specified,
+       then it will be fname + "_wk.txt"
   """
 
   import sys
@@ -266,7 +270,7 @@ def rspace_killer ( fname, fout = None ) :
     fout.write( line.rstrip() )
     
   print( "%s Compeleted!" % sys._getframe(0).f_code.co_name ) 
- 
+
 if __name__ == "__main__" :
   import sys
   print("Starting WS")
