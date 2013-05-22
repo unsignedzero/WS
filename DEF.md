@@ -1,31 +1,4 @@
 ---------------------------------------------------------------
-| -- START OF FILE -- -- START OF FILE -- -- START OF FILE -- |
----------------------------------------------------------------
----------------------------------------------------------------
-StreamCheck 
-FileList:
--WSv2.5.py or WSv3.py
--WS.sh
-Verison 0.8.3.1
-Built in Python
-Created by David Tran (unsignedzero)
-
-64CR(64 character per line plus carriage return)
-
-Please READ THIS TEXT FILE BEFORE ASKING QUESTIONS! If this 
-file is incomplete, please go to, 
-https://bitbucket.org/unsignedzero/ws/overview
-and download the file again, or read it there. 
-
-Abstract:
-The purpose of this code is to provide a set of functions for
-formatting, debugging and related purposes for programmers.
-Each function has specific requirements that can be different
-from other functions, so read about it before using it. As 
-with other Python Scripts, this can be executed directly.
-In this case it will run the formatter function.
----------------------------------------------------------------
----------------------------------------------------------------
 
  - Table of Contents
  - - Use Ctrl/Cmd + F to jump to certain part of this text
@@ -332,4 +305,3 @@ have any suggestions and comments. I DON'T check it daily.
 ---------------------------------------------------------------
 |  -- END OF FILE --   -- END OF FILE --   -- END OF FILE --  |
 ---------------------------------------------------------------
-

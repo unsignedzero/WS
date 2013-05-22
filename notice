@@ -1,5 +1,0 @@
-Python 2.5 and above supports the Ternary operator which is used in this
-script. Until they are converted back into if/else statements, the WSv2
-will ONLY run on Python version 2.5+.
-
-Special 16 has a few bugs to iron out.

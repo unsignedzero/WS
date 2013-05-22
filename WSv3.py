@@ -1,8 +1,8 @@
-
+#!/usr/bin/python
 r"""
 # WonderSwan 
 # By David Tran (unsignedzero)
-# 11-29-2011
+# 05-21-2013
 # Version 0.8.3.1
 # Provides basic meta programming support to python "format"
 
@@ -15,8 +15,13 @@ with other Python Scripts, this can be executed directly.
 In this case it will run the formatter function.
 """
 
-#DO NOT CHANGE BELOW THIS POINT
+from sys import version_info
 
+# Making input compatible for 2
+if version_info[0] == 2:
+  input = raw_input
+
+# Internal Errors
 class ZText_Error ( Exception ):
   r"""
   ZText_Error
@@ -50,14 +55,8 @@ def pause():
 
       Correct pauses regardless of the os this function is running on.
   """
-  #import os,sys
-  #pau = "pause" if sys.platform[:3]=="win" else 
-    #"read -rsn 1 -p \"Press any key to continue...\\n\""
-  #os.system(pau)
   
   input("Press any key to continue...\n")
-
-  
 
 def formatter( fname, fout = None, space_count = 2, 
   *kargs, special = 0, EXCEPTION = True, DEBUG = False ):
@@ -116,11 +115,17 @@ def formatter( fname, fout = None, space_count = 2,
 
          8 -- Comment-only // lines are shifted -1 left
 
-        16 -- Non-braced, if/for/while will indent
+        16 -- Non-braced, if/for/while will indent (NOT WORKING)
         
   """
   
   import sys
+  if special == None:
+    special = 0
+
+  # Prevent user from accessing 16
+  if special & 16:
+    special ^= 16
   
   shift       = 0
   shift_delay = 0   #For   4
@@ -147,22 +152,17 @@ def formatter( fname, fout = None, space_count = 2,
 
   for (count,line) in enumerate(source_code) :
 
-     ###err_code.write( '%03d | ' % len(line.strip() ) + line)
+    ###err_code.write( '%03d | %s' % (len(line.strip()), line))
 
     #Empty Line are Empty
      empty_line = 1 if line.strip() else 0
    
      line = ( ( empty_line * ( shift + cond_shift + mline_shift  )*  
-              space_count * space_char                            ) 
-              + line.strip()                                      )
+              space_count * space_char                           ) 
+              + line.strip()                                     )
               
     #Insert Extra Formatting here
      if special > 0:
-       if special & 1 :
-         if brace_start in line and brace_end not in line :
-           stack.append( line[:-1].strip() )
-         elif brace_start not in line and brace_end in line :
-           line += " // " + stack.pop()
        if special & 4 :      
          if r'/*' in line:
            shift_delay +=1
@@ -178,9 +178,16 @@ def formatter( fname, fout = None, space_count = 2,
            cond_shift = 1
          else:
            cond_shift = 0
+       if special & 1 :
+         if brace_start in line and brace_end not in line :
+           temp = line.strip()[:-1] 
+           temp = "".join(temp.split('{').split('}'))
+           stack.append(temp)
+         elif brace_start not in line and brace_end in line :
+           line = "%s%s%s" % (line, " // ", stack.pop())
            
     #Write to File
-     dest_code.write( line + '\n' )
+     dest_code.write( "%s%s" % (line, '\n') )
 
     ##Calculate Shift for next line
      if brace_start in line :
@@ -202,10 +209,10 @@ def formatter( fname, fout = None, space_count = 2,
     print( "\n  File \"%s\" , in %s" % 
       ( fname,  sys._getframe().f_code.co_name ) )
     raise UnbalancedBraces( 0 , "Unbalanced Opening Braces in the file!" )
-  print( "%s Compeleted!" % sys._getframe(0).f_code.co_name )
 
+  print( "%s compeleted!" % sys._getframe(0).f_code.co_name )
   
-def lcount( fname , fout = None, width = 6, *kargs, code = "UTF-8" ) :
+def lcount( fname , fout = None, width = 5, *kargs, code = "UTF-8" ) :
   r"""
   lcount(...)
      lcount( fname , fout = None, width = 6, *kargs, code = "UTF-8" )
@@ -230,15 +237,15 @@ def lcount( fname , fout = None, width = 6, *kargs, code = "UTF-8" ) :
   #Files
   file_in  = open(fname, "r", 1, code)
   fout = (fname + '_counted.txt') if (fout == None) else fout 
-  file_out = open(fout,"w" , 1, code)
+  file_out = open(fout, "w" , 1, code)
 
   print("%s starting with %s. Output is %s." % 
     (sys._getframe(0).f_code.co_name , fname, fout) )
     
-  width = "%0" + str(width) + "d | "
+  width = "%s%d%s" % ("%0", width, "d | %s") 
 
   for (count,line) in enumerate(file_in) :
-    file_out.write( str( width % count) + line )  
+    file_out.write( width % (count, line) )
 
   print( "%s Compeleted!" % sys._getframe(0).f_code.co_name )  
 
@@ -272,51 +279,71 @@ def rspace_killer ( fname, fout = None ) :
   print( "%s Compeleted!" % sys._getframe(0).f_code.co_name ) 
 
 if __name__ == "__main__" :
-  import sys
+  from argparse import ArgumentParser
+  from os import rename, remove
+
+  # Assembles the parser
+  parser = ArgumentParser(description=(
+    'WhiteSpace : Reformats a file so it looks cleaner'
+    ))
+
+  parser.add_argument('filenames', metavar='FName', type=str, nargs='*',
+                      help='A list of files that will be parsed')
+  parser.add_argument('-m', '--mode', type=int, default=0,
+                      help="Sets the mode of the formatter")
+  parser.add_argument('-s', '--spaceCount', type=int, default=2,
+                      help="Sets the amount of spaces/tabs per indent level")
+  parser.add_argument('-t', '--tab', default=False, 
+                      action='store_const', const=True,
+                      help="Uses tabs rather than spaces for indent")
+  parser.add_argument('-d', '--debug', default=False, 
+                      action='store_const', const=True,
+                      help=
+                      "Prints out line count and every conditional closing")
+
   print("Starting WS")
-  try:
-    #We test and see if, upon execution, some arguments are passed.
-    #
-    #Written this way, the code will run, if at least one argument is
-    #passed. The other parameter(s), will be default ones.
-    #If not, we will load our manual CLI prompt to get the needed 
-    #information from the user
-    inf = sys.argv[1]
-    outf = (sys.argv[1] + "_edit.txt") if ( 
-      len(sys.argv[1:2]) == 1 ) else sys.argv[2]
-    spf = 0 if ( len(sys.argv[1:3]) < 3 ) else sys.argv[3]
-  except IndexError:
+
+  # Readin from the parser
+  readin = parser.parse_args()
+
+  spf = readin.mode
+  space_count = readin.spaceCount
+
+  if readin.tab:
+    spf = 2 if spf == None else spf | 2
+
+  debug = readin.debug
+  if debug:
+    spf = 1 if spf == None else spf | 1
+
+  if not readin.filenames:
     #We are in the CLI Prompt
-    finput = input("Please enter a file name\n")
-    finput = finput.split()
-    try:
-      #Sets default values BEFORE getting it from input. Done this way,
-      #both variables will have default starting values before
-      #we try to fill it in.
-      foutput = None
-      mode = 0
-      foutput = str(finput[1])
-      mode = int(finput[2])
-    except IndexError:
-      pass
-    finally:
-      if ( foutput == '0' ) :
-        #'0' is an escape variable that can be typed in as input and
-        #remapped to None, so that the programmer can use the default 
-        #output file
-        foutput = None
-      if ( isinstance(finput,list) ) :
-        #Note that strings can be accessed as lists with the [] operator
-        #so we must check if the input is a legit list or just an array
-        #of chars!
-        formatter(finput[0], foutput, special = int(mode))
-      else :
-        formatter(finput, special = 0)
+    print("Starting interactive mode..")
+    finput = input("Please enter a file input name\n")
+    fouput = input("Please enter a file output name\n")
+
+    if spf == None:
+      spf = int(input("Please set the mode bits"))
+    formatter(finput, foutput, special = spf, space_count=space_count)
+
+    if debug :
+      ftemp = "%s%s" % (foutput,'_')
+      rename(foutput, ftemp)
+      lcount(ftemp, foutput)
+      remove(ftemp)
   else:
-    #We got some arguments passed in on run time. Don't use internal prompt.
-    if ( outf == '0' ) :
-      #Like above '0' is the escape value for default, for the 2nd argument
-      outf = None
-    formatter(inf,outf, special = spf)
+    #We are in batch mode
+    if spf == None:
+      spf = 0
+    if debug:
+      for file in readin.filenames:
+        ftemp = "%s%s" % (file, '_')
+        foutput = "%s%s" % (file, '.ws')
+        formatter(file, ftemp, special = spf, space_count=space_count)
+        lcount(ftemp, foutput)
+        remove(ftemp)
+    else:
+      for file in readin.filenames:
+        formatter(file, special = spf, space_count=space_count)
   pause()
   
