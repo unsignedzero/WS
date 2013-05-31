@@ -21,6 +21,8 @@ Created by David Tran (unsignedzero)
 
 # Version/Changelog #
 
+* Updated DEFinitions file to markdown format
+
 ## Version 0.9.0.0 05-21-2013 #
 * Updated old code repo to
   * Use Markdown for README
