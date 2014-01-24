@@ -2,15 +2,14 @@
 
 Abstract:
 The purpose of this code is to provide a set of functions for formatting,
-debugging and related purposes for programmers.  Each function has specific 
-requirements that can be different from other functions, so read about it 
-before using it. As with other Python Scripts, this can be executed directly.
-In this case it will run the formatter function or formatter and lcount if
+debugging and related purposes for programmers.
+As with other Python Scripts, this can be executed directly.
+In this case, it will run the formatter function or formatter and lcount if
 debug is set.
 
-I assume that this script will be used on systems with at Python v2.5 or 
-greater. This 2.5 we selected because they was when the ternary operator was
-added into the system.
+I assume that this script will be used on systems with at Python version 2.5 or
+greater. Version 2.5 was selected because that was when the ternary operator was
+added.
 
 Created by David Tran (unsignedzero)
 
@@ -21,6 +20,8 @@ Created by David Tran (unsignedzero)
 
 # Version/Changelog #
 
+* .gitignore file updated.
+* Cleaning up README.md.
 * Updated DEFinitions file to markdown format
 
 ## Version 0.9.0.0 05-21-2013 #
@@ -29,7 +30,7 @@ Created by David Tran (unsignedzero)
   * Use ArgsParse rather than manually parse input
   * Cleaned up string concat to use % operator rather than +
 * Batch mode can take any amount of arguments for files.
-* Debug option added so it spits the file with line count and matching 
+* Debug option added so it spits the file with line count and matching
   conditionals
 * Works with JS files
 * Changed to MIT license
